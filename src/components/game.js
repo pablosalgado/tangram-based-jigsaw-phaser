@@ -58,25 +58,62 @@ function create() {
     new Phaser.Geom.Polygon('0 225 225 0 450 225'),
   ];
 
-  // Build one sprite for each piece. It is draggable.
+  let x = this.cameras.main.centerX;
+  let y = this.cameras.main.centerY;
+
+  // Right positions for each piece
+  let rightPositions = [
+    new Phaser.Math.Vector2(x - 225, y),
+    new Phaser.Math.Vector2(x, y - 225),
+    new Phaser.Math.Vector2(x + 337.5, y - 112.5),
+    new Phaser.Math.Vector2(x + 112.5, y),
+    new Phaser.Math.Vector2(x, y + 225),
+    new Phaser.Math.Vector2(x + 225, y + 225),
+    new Phaser.Math.Vector2(x - 225, y + 337.5),
+  ];
+
+  // Build one sprite for each piece. Each one is draggable.
   for (let i = 0; i < 7; i++) {
     let hitArea = hitAreas[i];
     let piece = this.make.sprite({
-      x: this.cameras.main.centerX,
-      y: this.cameras.main.centerY,
+      x: x,
+      y: y,
       key: `piece-0${i}`,
     });
     piece.name = `piece-0${i}`;
     piece.setInteractive(hitArea, hitAreaCallback);
     this.input.setDraggable(piece);
+
+    Object.defineProperty(piece, 'rightPosition', {
+      value: rightPositions[i],
+      writable: false
+    });
+
+    Object.defineProperty(piece, 'inRightPosition', {
+      value: false,
+      writable: true
+    });
   }
 
   this.input.on('drag', function (pointer, gameObject, x, y) {
-    if (gameObject.name === 'piece-00') {
-      console.log('Hi there drag.')
+    // Don't move the piece if already in position.
+    if (gameObject.inRightPosition) {
+      return;
     }
+
+    // console.log(`piece: ${gameObject.name}: (${x}, ${y}) -> (${gameObject.rightPosition.x},${gameObject.rightPosition.y})`);
+
+    // Move the piece to its right position when near to it.
+    if (gameObject.rightPosition.distance(new Phaser.Math.Vector2(x, y)) < 20) {
+      gameObject.inRightPosition = true;
+      gameObject.x = gameObject.rightPosition.x;
+      gameObject.y = gameObject.rightPosition.y;
+      return;
+    }
+
     gameObject.x = x;
-    gameObject.y = y
+    gameObject.y = y;
+
   });
 }
 
