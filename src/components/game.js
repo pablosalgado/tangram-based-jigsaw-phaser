@@ -28,11 +28,11 @@ export default {
 function preload() {
   const params = document.querySelector('#game-parameters');
 
-  this.load.image('image', `/assets/sprites/${params.dataset.image}/image.png`);
-  this.load.image('frame', '/assets/sprites/frame.png');
+  this.load.image('image', `./assets/sprites/${params.dataset.image}/image.png`);
+  this.load.image('frame', './assets/sprites/frame.png');
 
   for (let i = 1; i < 8; i++) {
-    this.load.image(`piece-0${i - 1}`, `/assets/sprites/${params.dataset.image}/piece-0${i}.png`);
+    this.load.image(`piece-0${i - 1}`, `./assets/sprites/${params.dataset.image}/piece-0${i}.png`);
   }
 }
 
