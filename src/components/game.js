@@ -25,6 +25,10 @@ export default {
   methods: {}
 };
 
+function init() {
+  this.cameras.main.setBackgroundColor('#f26f12');
+}
+
 function preload() {
   const params = document.querySelector('#game-parameters');
 
@@ -34,10 +38,9 @@ function preload() {
   for (let i = 1; i < 8; i++) {
     this.load.image(`piece-0${i - 1}`, `./assets/sprites/${params.dataset.image}/piece-0${i}.png`);
   }
-}
 
-function init() {
-  this.cameras.main.setBackgroundColor('#f26f12');
+  this.load.audio('background', './assets/audio/Dramatic-mystery-theme-song.mp3');
+  this.load.audio('click', './assets/audio/Button_Push-Mike_Koenig-1659525069.mp3');
 }
 
 function create() {
@@ -94,6 +97,10 @@ function create() {
       writable: true
     });
   }
+  let background = this.sound.add('background');
+  background.play({loop: true});
+
+  let click = this.sound.add('click');
 
   this.input.on('drag', function (pointer, gameObject, x, y) {
     // Don't move the piece if already in position.
@@ -105,6 +112,7 @@ function create() {
 
     // Move the piece to its right position when near to it.
     if (gameObject.rightPosition.distance(new Phaser.Math.Vector2(x, y)) < 20) {
+      click.play({});
       gameObject.inRightPosition = true;
       gameObject.x = gameObject.rightPosition.x;
       gameObject.y = gameObject.rightPosition.y;
